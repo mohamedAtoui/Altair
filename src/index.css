@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+
+@keyframes tooltipIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes swirl {
+  0% { transform: rotate(0deg) translateX(20px) rotate(0deg); opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { transform: rotate(360deg) translateX(20px) rotate(-360deg); opacity: 0.3; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes ghostHandWave {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(10px) rotate(10deg); }
+  75% { transform: translateX(-10px) rotate(-10deg); }
+}
+
+@keyframes ghostHandPinch {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.7); }
+}
+
+@keyframes ghostHandPush {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes progressStripe {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(8, 8, 20, 0.9);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 28px 6px 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='rgba(255,255,255,0.5)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color 200ms ease;
+}
+
+select:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+select:focus {
+  border-color: rgba(179, 136, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.15);
+}
+
+select option {
+  background: #0a0a1a;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 200ms ease;
+}
+
+button:focus-visible {
+  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.15);
+}
+
+input[type="file"] {
+  display: none;
+}
