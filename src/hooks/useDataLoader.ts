@@ -3,10 +3,12 @@ import Papa from 'papaparse';
 import { useDataStore } from '../stores/useDataStore';
 import { useParticleStore } from '../stores/useParticleStore';
 import { useAppStore } from '../stores/useAppStore';
+import { useGraphStore } from '../stores/useGraphStore';
 import { analyzeColumns, computeParticleProperties, computeColumnStats, computeCorrelations } from '../lib/dataProcessing';
+import { computeKnnEdges } from '../lib/graphProcessing';
 import { autoDetectMapping } from '../lib/autoDetect';
 import { runUmap } from '../lib/umapWorkerClient';
-import type { DataRow, DataMapping } from '../types/index';
+import type { DataRow, DataMapping, EdgeLabel } from '../types/index';
 
 export function useDataLoader() {
   const setData = useDataStore((s) => s.setData);
@@ -18,6 +20,8 @@ export function useDataLoader() {
   const setFromData = useParticleStore((s) => s.setFromData);
   const setMode = useAppStore((s) => s.setMode);
   const setError = useAppStore((s) => s.setError);
+  const setEdges = useGraphStore((s) => s.setEdges);
+  const setEdgeLabels = useGraphStore((s) => s.setEdgeLabels);
 
   const processData = useCallback(
     async (rows: DataRow[], mappingOverride?: Partial<DataMapping>) => {
@@ -70,6 +74,30 @@ export function useDataLoader() {
 
         setFromData(positions, colors, sizes);
 
+        // Compute k-NN edges for graph visualization (default k=4 for distributed topology)
+        const edges = computeKnnEdges(positions, rows.length, 4);
+        setEdges(edges);
+
+        // Generate edge labels for distributed mode (default)
+        if (mapping.labelColumn) {
+          const labels = rows.map((r) => String(r[mapping.labelColumn!] ?? ''));
+          const maxLabels = Math.min(edges.length, 40);
+          const edgeLabels: EdgeLabel[] = [];
+          for (let i = 0; i < maxLabels; i++) {
+            const e = edges[i];
+            const src = labels[e.source] ?? '';
+            const tgt = labels[e.target] ?? '';
+            if (src && tgt) {
+              edgeLabels.push({
+                source: e.source,
+                target: e.target,
+                text: `${src.slice(0, 12)} — ${tgt.slice(0, 12)}`,
+              });
+            }
+          }
+          setEdgeLabels(edgeLabels);
+        }
+
         // Compute stats
         const stats = computeColumnStats(rows, columns);
         setStats(stats);
@@ -87,7 +115,7 @@ export function useDataLoader() {
         return null;
       }
     },
-    [setData, setMapping, setUmapEmbedding, setProcessingProgress, setStats, setCorrelations, setFromData, setMode, setError]
+    [setData, setMapping, setUmapEmbedding, setProcessingProgress, setStats, setCorrelations, setFromData, setMode, setError, setEdges, setEdgeLabels]
   );
 
   const loadCsv = useCallback(

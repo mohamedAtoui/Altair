@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -12,8 +12,8 @@ html, body, #root {
   overflow: hidden;
   background: #000000;
   color: rgba(255, 255, 255, 0.92);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 13px;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -25,12 +25,12 @@ html, body, #root {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 0;
 }
 
 @keyframes tooltipIn {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -76,16 +76,21 @@ html, body, #root {
   100% { background-position: 40px 0; }
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 select {
   appearance: none;
   -webkit-appearance: none;
-  background: rgba(8, 8, 20, 0.9);
+  background: #000000;
   color: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
   padding: 6px 28px 6px 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 11px;
   cursor: pointer;
   outline: none;
   width: 100%;
@@ -96,21 +101,21 @@ select {
 }
 
 select:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 select:focus {
-  border-color: rgba(179, 136, 255, 0.4);
-  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.15);
+  border-color: #00ffa3;
+  box-shadow: none;
 }
 
 select option {
-  background: #0a0a1a;
+  background: #000000;
   color: rgba(255, 255, 255, 0.92);
 }
 
 button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
   cursor: pointer;
   border: none;
   outline: none;
@@ -118,7 +123,7 @@ button {
 }
 
 button:focus-visible {
-  box-shadow: 0 0 0 2px rgba(179, 136, 255, 0.15);
+  box-shadow: 0 0 0 1px #00ffa3;
 }
 
 input[type="file"] {

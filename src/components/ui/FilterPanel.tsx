@@ -1,17 +1,6 @@
-// ── NEBULA 3D Visualization — Filter Panel ────────────────────────────
+// ── Topologies of Thoughts — Filter Panel ───────────────────────────────
 import React from 'react';
 import { useDataStore } from '../../stores/useDataStore';
-
-const CATEGORY_COLORS = [
-  '#b388ff',
-  '#66bb6a',
-  '#ffa726',
-  '#42a5f5',
-  '#ef5350',
-  '#ab47bc',
-  '#26c6da',
-  '#ffca28',
-];
 
 export const FilterPanel: React.FC = () => {
   const columns = useDataStore((s) => s.columns);
@@ -20,10 +9,8 @@ export const FilterPanel: React.FC = () => {
   const setFilter = useDataStore((s) => s.setFilter);
   const resetFilters = useDataStore((s) => s.resetFilters);
 
-  // Find the color column metadata
   const colorCol = columns.find((c) => c.name === mapping.colorColumn);
 
-  // Only show for categorical columns with categories
   if (!colorCol || colorCol.type !== 'categorical' || !colorCol.categories) {
     return null;
   }
@@ -34,18 +21,6 @@ export const FilterPanel: React.FC = () => {
     (cat) => filters[cat] === undefined || filters[cat] === true,
   );
   const noneChecked = categories.every((cat) => filters[cat] === false);
-
-  const handleToggleAll = () => {
-    if (allChecked) {
-      // Set all to false
-      for (const cat of categories) {
-        setFilter(cat, false);
-      }
-    } else {
-      // Reset (all visible)
-      resetFilters();
-    }
-  };
 
   const handleShowAll = () => {
     resetFilters();
@@ -59,7 +34,6 @@ export const FilterPanel: React.FC = () => {
 
   return (
     <div style={{ marginTop: 12 }}>
-      {/* Header */}
       <div
         style={{
           display: 'flex',
@@ -70,11 +44,11 @@ export const FilterPanel: React.FC = () => {
       >
         <span
           style={{
-            fontSize: 10,
+            fontSize: 9,
             fontWeight: 500,
             textTransform: 'uppercase',
             letterSpacing: '2px',
-            color: 'rgba(255,255,255,0.5)',
+            color: '#00ffa3',
           }}
         >
           Filters
@@ -84,13 +58,14 @@ export const FilterPanel: React.FC = () => {
             onClick={handleShowAll}
             style={{
               fontSize: 9,
-              color: allChecked ? '#b388ff' : 'rgba(255,255,255,0.4)',
+              color: allChecked ? '#00ffa3' : 'rgba(255,255,255,0.4)',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: 0,
               textTransform: 'uppercase',
               letterSpacing: '1px',
+              fontFamily: "'JetBrains Mono', monospace",
             }}
           >
             All
@@ -100,13 +75,14 @@ export const FilterPanel: React.FC = () => {
             onClick={handleShowNone}
             style={{
               fontSize: 9,
-              color: noneChecked ? '#b388ff' : 'rgba(255,255,255,0.4)',
+              color: noneChecked ? '#00ffa3' : 'rgba(255,255,255,0.4)',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
               padding: 0,
               textTransform: 'uppercase',
               letterSpacing: '1px',
+              fontFamily: "'JetBrains Mono', monospace",
             }}
           >
             None
@@ -114,12 +90,10 @@ export const FilterPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* Category checkboxes */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {categories.map((cat, i) => {
+        {categories.map((cat) => {
           const isVisible =
             filters[cat] === undefined || filters[cat] === true;
-          const color = CATEGORY_COLORS[i % CATEGORY_COLORS.length];
 
           return (
             <label
@@ -135,9 +109,9 @@ export const FilterPanel: React.FC = () => {
                   ? 'rgba(255,255,255,0.85)'
                   : 'rgba(255,255,255,0.3)',
                 transition: 'color 150ms ease',
+                fontFamily: "'JetBrains Mono', monospace",
               }}
             >
-              {/* Custom checkbox */}
               <div
                 onClick={(e) => {
                   e.preventDefault();
@@ -146,9 +120,9 @@ export const FilterPanel: React.FC = () => {
                 style={{
                   width: 14,
                   height: 14,
-                  borderRadius: 3,
-                  border: `1.5px solid ${isVisible ? color : 'rgba(255,255,255,0.15)'}`,
-                  background: isVisible ? color : 'transparent',
+                  borderRadius: 0,
+                  border: `1.5px solid ${isVisible ? '#00ffa3' : 'rgba(255,255,255,0.15)'}`,
+                  background: isVisible ? 'rgba(0,255,163,0.15)' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -162,7 +136,7 @@ export const FilterPanel: React.FC = () => {
                     height="8"
                     viewBox="0 0 12 12"
                     fill="none"
-                    stroke="rgba(0,0,0,0.7)"
+                    stroke="#00ffa3"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -178,7 +152,7 @@ export const FilterPanel: React.FC = () => {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {cat}
+                [{cat}]
               </span>
             </label>
           );

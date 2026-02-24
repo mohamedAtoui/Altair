@@ -1,4 +1,4 @@
-// ── NEBULA 3D Visualization — Overlay Panel ───────────────────────────
+// ── Topologies of Thoughts — Overlay Panel ──────────────────────────────
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
 import { useDataStore } from '../../stores/useDataStore';
@@ -8,8 +8,6 @@ import { MappingControls } from './MappingControls';
 import { FilterPanel } from './FilterPanel';
 import { DataStats } from './DataStats';
 import type { DataRow } from '../../types/index';
-
-/* ── CSS Keyframes ─────────────────────────────────────────────────── */
 
 const KEYFRAMES = `
 @keyframes nebula-panel-slide-in {
@@ -34,7 +32,6 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Inject keyframes
   useEffect(() => {
     const styleEl = document.createElement('style');
     styleEl.textContent = KEYFRAMES;
@@ -87,88 +84,49 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
     [onDemoLoad],
   );
 
-  /* ── Collapsed state ─────────────────────────────────────────────── */
-
   if (isPanelCollapsed) {
     return (
-      <div
+      <button
+        onClick={togglePanel}
         style={{
           position: 'fixed',
           top: 20,
           left: 20,
           zIndex: 800,
-          width: PANEL_COLLAPSED_WIDTH,
-          background: 'rgba(8,8,20,0.82)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 12,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '12px 0',
-          gap: 12,
+          background: 'rgba(0,0,0,0.85)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: 0,
+          padding: '8px 14px',
+          cursor: 'pointer',
+          fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
+          fontSize: 10,
+          fontWeight: 600,
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.5)',
+          backdropFilter: 'blur(12px)',
+          transition: 'all 200ms ease',
         }}
+        title="Expand data panel"
       >
-        {/* Expand button */}
-        <button
-          onClick={togglePanel}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'rgba(255,255,255,0.6)',
-            padding: 4,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          title="Expand panel"
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-
-        {/* Nebula icon */}
-        <div
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: '#b388ff',
-            boxShadow: '0 0 8px rgba(179,136,255,0.5)',
-          }}
-        />
-      </div>
+        DATA
+      </button>
     );
   }
-
-  /* ── Expanded state ──────────────────────────────────────────────── */
 
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '6px 8px',
-    fontSize: 12,
+    fontSize: 11,
     color: 'rgba(255,255,255,0.92)',
-    background: 'rgba(8,8,20,0.82)',
-    border: '1px solid rgba(255,255,255,0.06)',
-    borderRadius: 8,
+    background: '#000000',
+    border: '1px solid rgba(255,255,255,0.15)',
+    borderRadius: 0,
     outline: 'none',
     appearance: 'none',
     WebkitAppearance: 'none',
     cursor: 'pointer',
+    fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
     backgroundImage:
       'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'rgba(255,255,255,0.3)\'/%3E%3C/svg%3E")',
     backgroundRepeat: 'no-repeat',
@@ -187,21 +145,19 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
         maxHeight: 'calc(100vh - 40px)',
         overflowY: 'auto',
         overflowX: 'hidden',
-        background: 'rgba(8,8,20,0.82)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: 12,
+        background: 'rgba(0,0,0,0.85)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        borderRadius: 0,
         padding: 16,
+        backdropFilter: 'blur(12px)',
         animation: mounted
           ? 'nebula-panel-slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1) both'
           : 'none',
-        /* Scrollbar styling (webkit) */
         scrollbarWidth: 'thin',
         scrollbarColor: 'rgba(255,255,255,0.08) transparent',
       }}
     >
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+      {/* Header */}
       <div
         style={{
           display: 'flex',
@@ -216,10 +172,10 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
             fontWeight: 600,
             textTransform: 'uppercase',
             letterSpacing: '3px',
-            color: 'rgba(255,255,255,0.92)',
+            color: '#00ffa3',
           }}
         >
-          NEBULA
+          DATA
         </span>
         <button
           onClick={togglePanel}
@@ -250,22 +206,22 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
         </button>
       </div>
 
-      {/* ── File upload ─────────────────────────────────────────────────── */}
+      {/* File upload */}
       <div
         onClick={() => fileInputRef.current?.click()}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
-          border: `1.5px dashed ${isDragOver ? '#b388ff' : 'rgba(255,255,255,0.12)'}`,
-          borderRadius: 8,
+          border: `1.5px dashed ${isDragOver ? '#00ffa3' : 'rgba(255,255,255,0.15)'}`,
+          borderRadius: 0,
           padding: '14px 12px',
           textAlign: 'center',
           cursor: 'pointer',
           marginBottom: 12,
           transition: 'border-color 200ms ease, background 200ms ease',
           background: isDragOver
-            ? 'rgba(179,136,255,0.06)'
+            ? 'rgba(0,255,163,0.04)'
             : 'transparent',
         }}
       >
@@ -293,7 +249,7 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
         </svg>
         <div
           style={{
-            fontSize: 11,
+            fontSize: 10,
             color: 'rgba(255,255,255,0.5)',
             marginTop: 4,
           }}
@@ -302,11 +258,11 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
         </div>
       </div>
 
-      {/* ── Load Demo dropdown ─────────────────────────────────────────── */}
+      {/* Load Demo dropdown */}
       <div style={{ marginBottom: 12 }}>
         <label
           style={{
-            fontSize: 10,
+            fontSize: 9,
             fontWeight: 500,
             textTransform: 'uppercase',
             letterSpacing: '2px',
@@ -333,35 +289,30 @@ export const OverlayPanel: React.FC<OverlayPanelProps> = ({
         </select>
       </div>
 
-      {/* ── Divider ────────────────────────────────────────────────────── */}
+      {/* Divider */}
       {columns.length > 0 && (
         <div
           style={{
             height: 1,
-            background: 'rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.1)',
             margin: '8px 0',
           }}
         />
       )}
 
-      {/* ── Mapping Controls ───────────────────────────────────────────── */}
       <MappingControls />
-
-      {/* ── Filter Panel ───────────────────────────────────────────────── */}
       <FilterPanel />
 
-      {/* ── Divider ────────────────────────────────────────────────────── */}
       {columns.length > 0 && (
         <div
           style={{
             height: 1,
-            background: 'rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.1)',
             margin: '8px 0',
           }}
         />
       )}
 
-      {/* ── Data Stats ─────────────────────────────────────────────────── */}
       <DataStats />
     </div>
   );

@@ -58,7 +58,7 @@ function cssColorToRgb(color: string): [number, number, number] {
       return [parseFloat(m[0]) / 255, parseFloat(m[1]) / 255, parseFloat(m[2]) / 255];
     }
   }
-  return [0.7, 0.53, 1.0]; // fallback violet
+  return [1.0, 1.0, 1.0]; // fallback white
 }
 
 export function computeParticleProperties(
@@ -147,10 +147,10 @@ export function computeParticleProperties(
       }
     }
   } else {
-    // Default violet
+    // Default white
     for (let i = 0; i < count; i++) {
-      colors[i * 3] = 0.702 * PARTICLE_EMISSIVE_MULTIPLIER;
-      colors[i * 3 + 1] = 0.533 * PARTICLE_EMISSIVE_MULTIPLIER;
+      colors[i * 3] = 1.0 * PARTICLE_EMISSIVE_MULTIPLIER;
+      colors[i * 3 + 1] = 1.0 * PARTICLE_EMISSIVE_MULTIPLIER;
       colors[i * 3 + 2] = 1.0 * PARTICLE_EMISSIVE_MULTIPLIER;
     }
   }
@@ -203,6 +203,76 @@ export function computeColumnStats(
 
     return base;
   });
+}
+
+/**
+ * Compute topology-specific colors that override default data colors.
+ */
+export function computeTopologyColors(
+  count: number,
+  topology: 'centralized' | 'decentralized' | 'distributed',
+  hubIndex?: number | null,
+  categoryIndices?: Int32Array,
+): Float32Array {
+  const colors = new Float32Array(count * 3);
+
+  if (topology === 'centralized') {
+    // Hub = bright gold/white, spokes = gradient from white to blue
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      if (i === hubIndex) {
+        colors[i3] = 2.0;     // gold-white hub
+        colors[i3 + 1] = 1.8;
+        colors[i3 + 2] = 1.0;
+      } else {
+        // Blue-white gradient
+        const t = i / count;
+        colors[i3] = 0.6 + t * 0.4;
+        colors[i3 + 1] = 0.8 + t * 0.2;
+        colors[i3 + 2] = 2.0;
+      }
+    }
+  } else if (topology === 'decentralized') {
+    // Each cluster gets a distinct vibrant color
+    const palette = [
+      [0.0, 1.6, 1.2],   // cyan
+      [1.6, 0.5, 1.8],   // magenta
+      [1.2, 1.8, 0.2],   // lime
+      [1.8, 0.8, 0.2],   // orange
+      [0.4, 0.6, 2.0],   // blue
+      [2.0, 1.6, 0.2],   // gold
+      [0.2, 1.8, 0.8],   // green
+      [1.8, 0.3, 0.5],   // red
+    ];
+    if (categoryIndices) {
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        const cat = categoryIndices[i];
+        const c = palette[cat % palette.length];
+        colors[i3] = c[0];
+        colors[i3 + 1] = c[1];
+        colors[i3 + 2] = c[2];
+      }
+    } else {
+      // Fallback: all white/cyan
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        colors[i3] = 1.0;
+        colors[i3 + 1] = 1.5;
+        colors[i3 + 2] = 1.5;
+      }
+    }
+  } else {
+    // Distributed: all white/cyan uniform
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      colors[i3] = 1.0;
+      colors[i3 + 1] = 1.5;
+      colors[i3 + 2] = 1.5;
+    }
+  }
+
+  return colors;
 }
 
 export function computeCorrelations(

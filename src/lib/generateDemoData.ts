@@ -105,6 +105,123 @@ export function generateExoplanets(count = 400): DataRow[] {
   return rows;
 }
 
+// ── 4. Knowledge Concepts ───────────────────────────────────────────
+export function generateKnowledgeConcepts(count = 80): DataRow[] {
+  const rng = seededRandom(2024);
+
+  const concepts: { concept: string; domain: string; importance: number; year: number; description: string }[] = [
+    // Interfaces
+    { concept: 'Gestural Input', domain: 'Interfaces', importance: 9, year: 2010, description: 'Direct manipulation through body movement' },
+    { concept: 'Haptic Feedback', domain: 'Interfaces', importance: 8, year: 2012, description: 'Tactile response to digital interaction' },
+    { concept: 'Spatial Computing', domain: 'Interfaces', importance: 10, year: 2023, description: 'Computing that blends digital and physical space' },
+    { concept: 'Voice Interface', domain: 'Interfaces', importance: 7, year: 2014, description: 'Natural language as primary input modality' },
+    { concept: 'Brain-Computer Interface', domain: 'Interfaces', importance: 9, year: 2020, description: 'Neural signals translated to digital commands' },
+    { concept: 'Tangible UI', domain: 'Interfaces', importance: 6, year: 2008, description: 'Physical objects as digital controllers' },
+    { concept: 'Gaze Tracking', domain: 'Interfaces', importance: 7, year: 2016, description: 'Eye movement as cursor and intent signal' },
+    { concept: 'Adaptive Interface', domain: 'Interfaces', importance: 8, year: 2018, description: 'UI that reshapes to user behavior patterns' },
+    { concept: 'Zero UI', domain: 'Interfaces', importance: 7, year: 2015, description: 'Invisible interfaces embedded in environment' },
+    { concept: 'Multimodal Fusion', domain: 'Interfaces', importance: 9, year: 2021, description: 'Combining gesture, voice, and gaze simultaneously' },
+    { concept: 'Kinesthetic Memory', domain: 'Interfaces', importance: 6, year: 2009, description: 'Muscle memory in interface interaction patterns' },
+    { concept: 'Responsive Typography', domain: 'Interfaces', importance: 5, year: 2013, description: 'Text that adapts to context and reading conditions' },
+    { concept: 'Micro-interactions', domain: 'Interfaces', importance: 7, year: 2014, description: 'Tiny animated feedback moments in UI' },
+    { concept: 'Dark Patterns', domain: 'Interfaces', importance: 4, year: 2010, description: 'Deceptive UI designed to manipulate users' },
+    { concept: 'Progressive Disclosure', domain: 'Interfaces', importance: 6, year: 2005, description: 'Revealing complexity gradually as needed' },
+    { concept: 'Ambient Display', domain: 'Interfaces', importance: 7, year: 2017, description: 'Peripheral awareness through subtle visual cues' },
+
+    // Cognition
+    { concept: 'Cognitive Load Theory', domain: 'Cognition', importance: 9, year: 1988, description: 'Working memory limits shape learning design' },
+    { concept: 'Distributed Cognition', domain: 'Cognition', importance: 8, year: 1995, description: 'Thinking spread across people, tools, environment' },
+    { concept: 'Embodied Cognition', domain: 'Cognition', importance: 9, year: 2001, description: 'Body and movement shape abstract thought' },
+    { concept: 'Attention Economy', domain: 'Cognition', importance: 7, year: 2006, description: 'Human attention as scarce economic resource' },
+    { concept: 'Flow State', domain: 'Cognition', importance: 8, year: 1990, description: 'Optimal challenge-skill balance in experience' },
+    { concept: 'Enactive Perception', domain: 'Cognition', importance: 7, year: 2004, description: 'Perception through active bodily engagement' },
+    { concept: 'Cognitive Offloading', domain: 'Cognition', importance: 8, year: 2016, description: 'Using external tools to extend mental capacity' },
+    { concept: 'Situated Learning', domain: 'Cognition', importance: 7, year: 1991, description: 'Knowledge constructed through contextual activity' },
+    { concept: 'Mirror Neurons', domain: 'Cognition', importance: 6, year: 1996, description: 'Neural basis for learning through observation' },
+    { concept: 'Metacognition', domain: 'Cognition', importance: 8, year: 2000, description: 'Thinking about thinking processes' },
+    { concept: 'Sensory Integration', domain: 'Cognition', importance: 7, year: 2003, description: 'Brain combining multiple sensory inputs into unity' },
+    { concept: 'Prospective Memory', domain: 'Cognition', importance: 5, year: 2007, description: 'Remembering to perform future intended actions' },
+    { concept: 'Cognitive Flexibility', domain: 'Cognition', importance: 8, year: 2011, description: 'Switching between mental frameworks fluidly' },
+    { concept: 'Pattern Recognition', domain: 'Cognition', importance: 9, year: 1998, description: 'Identifying structure in noisy information streams' },
+
+    // Systems
+    { concept: 'Network Topology', domain: 'Systems', importance: 9, year: 1969, description: 'Shape of connections determines system behavior' },
+    { concept: 'Emergence', domain: 'Systems', importance: 10, year: 1972, description: 'Complex behavior arising from simple local rules' },
+    { concept: 'Feedback Loops', domain: 'Systems', importance: 9, year: 1960, description: 'Circular causality amplifying or dampening change' },
+    { concept: 'Scale-Free Networks', domain: 'Systems', importance: 8, year: 1999, description: 'Networks with power-law degree distribution' },
+    { concept: 'Resilience Engineering', domain: 'Systems', importance: 7, year: 2006, description: 'Designing systems that adapt to unexpected failure' },
+    { concept: 'Autopoiesis', domain: 'Systems', importance: 6, year: 1980, description: 'Self-creating and self-maintaining living systems' },
+    { concept: 'Information Entropy', domain: 'Systems', importance: 8, year: 1948, description: 'Measuring uncertainty and disorder in data' },
+    { concept: 'Graph Theory', domain: 'Systems', importance: 9, year: 1736, description: 'Mathematics of relationships and connections' },
+    { concept: 'Swarm Intelligence', domain: 'Systems', importance: 7, year: 2001, description: 'Collective behavior of decentralized agents' },
+    { concept: 'Chaos Theory', domain: 'Systems', importance: 7, year: 1963, description: 'Sensitivity to initial conditions in deterministic systems' },
+    { concept: 'Cybernetics', domain: 'Systems', importance: 8, year: 1948, description: 'Study of control and communication in systems' },
+    { concept: 'Complex Adaptive Systems', domain: 'Systems', importance: 9, year: 1994, description: 'Systems that learn and evolve through interaction' },
+
+    // Culture
+    { concept: 'Digital Literacy', domain: 'Culture', importance: 8, year: 2005, description: 'Ability to critically navigate digital information' },
+    { concept: 'Participatory Design', domain: 'Culture', importance: 7, year: 1990, description: 'End users as co-creators of technology' },
+    { concept: 'Open Source', domain: 'Culture', importance: 9, year: 1998, description: 'Collaborative transparent knowledge production' },
+    { concept: 'Techno-Animism', domain: 'Culture', importance: 5, year: 2015, description: 'Attributing agency and spirit to technology' },
+    { concept: 'Data Sovereignty', domain: 'Culture', importance: 8, year: 2018, description: 'Ownership rights over personal digital information' },
+    { concept: 'Algorithmic Bias', domain: 'Culture', importance: 9, year: 2016, description: 'Systematic discrimination embedded in code' },
+    { concept: 'Digital Commons', domain: 'Culture', importance: 7, year: 2003, description: 'Shared digital resources governed collectively' },
+    { concept: 'Memetic Evolution', domain: 'Culture', importance: 6, year: 1976, description: 'Cultural ideas spreading and mutating like genes' },
+    { concept: 'Surveillance Capitalism', domain: 'Culture', importance: 8, year: 2019, description: 'Monetizing behavioral prediction from personal data' },
+    { concept: 'Post-Digital', domain: 'Culture', importance: 5, year: 2013, description: 'Culture where digital is unremarkable background' },
+    { concept: 'Maker Culture', domain: 'Culture', importance: 6, year: 2005, description: 'DIY ethos applied to technology and craft' },
+    { concept: 'Speculative Design', domain: 'Culture', importance: 7, year: 2013, description: 'Design as tool for imagining alternative futures' },
+
+    // Technology
+    { concept: 'Neural Networks', domain: 'Technology', importance: 10, year: 2012, description: 'Layered computation inspired by biological neurons' },
+    { concept: 'WebGL', domain: 'Technology', importance: 7, year: 2011, description: 'GPU-accelerated 3D graphics in web browsers' },
+    { concept: 'Edge Computing', domain: 'Technology', importance: 8, year: 2019, description: 'Processing data near its source for speed' },
+    { concept: 'Transformer Architecture', domain: 'Technology', importance: 10, year: 2017, description: 'Attention-based model revolutionizing AI' },
+    { concept: 'WebAssembly', domain: 'Technology', importance: 7, year: 2017, description: 'Near-native performance code in browsers' },
+    { concept: 'Federated Learning', domain: 'Technology', importance: 8, year: 2016, description: 'Training AI models without centralizing data' },
+    { concept: 'Generative Adversarial Networks', domain: 'Technology', importance: 8, year: 2014, description: 'Two competing networks producing realistic outputs' },
+    { concept: 'Diffusion Models', domain: 'Technology', importance: 9, year: 2020, description: 'Iterative denoising for high-quality generation' },
+    { concept: 'Knowledge Graphs', domain: 'Technology', importance: 9, year: 2012, description: 'Structured representation of entity relationships' },
+    { concept: 'Quantum Computing', domain: 'Technology', importance: 8, year: 2019, description: 'Harnessing quantum mechanics for computation' },
+    { concept: 'Reinforcement Learning', domain: 'Technology', importance: 9, year: 2013, description: 'Agents learning through reward and exploration' },
+    { concept: 'Digital Twin', domain: 'Technology', importance: 7, year: 2017, description: 'Virtual replica mirroring physical system state' },
+    { concept: 'Homomorphic Encryption', domain: 'Technology', importance: 6, year: 2020, description: 'Computing on encrypted data without decrypting' },
+    { concept: 'Vector Databases', domain: 'Technology', importance: 8, year: 2021, description: 'Storing and searching high-dimensional embeddings' },
+    { concept: 'Mixture of Experts', domain: 'Technology', importance: 8, year: 2022, description: 'Routing to specialized sub-networks for efficiency' },
+    { concept: 'Retrieval Augmented Generation', domain: 'Technology', importance: 9, year: 2023, description: 'Grounding AI outputs in retrieved knowledge' },
+  ];
+
+  const rows: DataRow[] = [];
+
+  // Use defined concepts first
+  for (let i = 0; i < Math.min(count, concepts.length); i++) {
+    const c = concepts[i];
+    rows.push({
+      concept: c.concept,
+      domain: c.domain,
+      importance: c.importance,
+      year: c.year,
+      description: c.description,
+    });
+  }
+
+  // Fill remaining with variations if count exceeds pre-defined
+  const domains = ['Interfaces', 'Cognition', 'Systems', 'Culture', 'Technology'];
+  const suffixes = ['Theory', 'Framework', 'Protocol', 'Model', 'Paradigm', 'Method'];
+  for (let i = concepts.length; i < count; i++) {
+    const domain = pick(rng, domains);
+    rows.push({
+      concept: `${domain} ${pick(rng, suffixes)} ${i}`,
+      domain,
+      importance: Math.round(between(rng, 3, 10)),
+      year: Math.round(between(rng, 1980, 2024)),
+      description: `Generated concept in ${domain.toLowerCase()} domain`,
+    });
+  }
+
+  return rows;
+}
+
 // ── 3. Fitness Tracker ──────────────────────────────────────────────
 export function generateFitnessTracker(count = 250): DataRow[] {
   const rng = seededRandom(77);

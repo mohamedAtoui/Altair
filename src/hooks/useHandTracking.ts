@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useHandStore } from '../stores/useHandStore';
 import { useAppStore } from '../stores/useAppStore';
-import { WEBCAM_WIDTH, WEBCAM_HEIGHT, HAND_TRACKING_FPS } from '../constants/index';
+import { getCameraStream, releaseCameraStream } from '../lib/cameraStream';
+import { HAND_TRACKING_FPS } from '../constants/index';
 
 let HandLandmarkerClass: any = null;
 let FilesetResolverClass: any = null;
@@ -23,10 +24,28 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
   const landmarkerRef = useRef<any>(null);
   const rafRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
-  const streamRef = useRef<MediaStream | null>(null);
   const cancelledRef = useRef(false);
 
+  const isActive = useAppStore((s) => s.isHandTrackingActive);
+
   useEffect(() => {
+    if (!isActive) {
+      cancelledRef.current = true;
+      cancelAnimationFrame(rafRef.current);
+      releaseCameraStream();
+      if (landmarkerRef.current) {
+        landmarkerRef.current.close();
+        landmarkerRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      useHandStore.getState().setHandDetected(false);
+      useHandStore.getState().setRawLandmarks(null);
+      useAppStore.getState().setHandTrackingStatus('off');
+      return;
+    }
+
     cancelledRef.current = false;
     const frameInterval = 1000 / HAND_TRACKING_FPS;
 
@@ -69,10 +88,26 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
 
     (async () => {
       try {
+        // The camera stream was already acquired in the click handler
+        // (preserving user-gesture context). Pick it up here.
+        const stream = getCameraStream();
+        if (!stream || !stream.active) {
+          throw new Error('Camera stream not available — was it acquired before activation?');
+        }
+
+        const video = videoRef.current;
+        if (video) {
+          video.srcObject = stream;
+          await video.play();
+          console.log('[NEBULA] Camera attached to video element');
+        }
+
+        // Load MediaPipe
         console.log('[NEBULA] Loading MediaPipe...');
         await loadMediaPipe();
         if (cancelledRef.current) return;
 
+        // Create hand landmarker
         console.log('[NEBULA] Creating hand landmarker...');
         const fileset = await FilesetResolverClass.forVisionTasks(
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
@@ -94,29 +129,21 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
         }
         landmarkerRef.current = landmarker;
 
-        console.log('[NEBULA] Requesting camera access...');
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: WEBCAM_WIDTH, height: WEBCAM_HEIGHT, facingMode: 'user' },
-        });
-        if (cancelledRef.current) {
-          stream.getTracks().forEach((t) => t.stop());
-          return;
-        }
-        streamRef.current = stream;
-
-        const video = videoRef.current;
-        if (video) {
-          video.srcObject = stream;
-          await video.play();
-          console.log('[NEBULA] Camera active — detection loop starting');
-        }
-
+        // Start detection loop
         if (!cancelledRef.current) {
+          useAppStore.getState().setHandTrackingStatus('active');
+          console.log('[NEBULA] Detection loop starting');
           rafRef.current = requestAnimationFrame(detect);
         }
       } catch (err: any) {
         if (!cancelledRef.current) {
           console.error('[NEBULA] Hand tracking init failed:', err);
+          releaseCameraStream();
+          if (videoRef.current) {
+            videoRef.current.srcObject = null;
+          }
+          useAppStore.getState().setHandTrackingStatus('error');
+          useAppStore.getState().setHandTrackingActive(false);
           useAppStore.getState().setError(`Hand tracking failed: ${err.message}`);
         }
       }
@@ -125,15 +152,11 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
     return () => {
       cancelledRef.current = true;
       cancelAnimationFrame(rafRef.current);
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((t) => t.stop());
-        streamRef.current = null;
-      }
+      releaseCameraStream();
       if (landmarkerRef.current) {
         landmarkerRef.current.close();
         landmarkerRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isActive, videoRef]);
 }

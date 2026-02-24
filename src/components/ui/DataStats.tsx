@@ -1,4 +1,4 @@
-// ── NEBULA 3D Visualization — Data Stats Panel ────────────────────────
+// ── Topologies of Thoughts — Data Stats Panel ──────────────────────────
 import React, { useState } from 'react';
 import { useDataStore } from '../../stores/useDataStore';
 import type { ColumnStats, CorrelationResult } from '../../types/index';
@@ -13,7 +13,6 @@ export const DataStats: React.FC = () => {
 
   return (
     <div style={{ marginTop: 12 }}>
-      {/* Section header */}
       <div
         onClick={() => setCollapsed((c) => !c)}
         style={{
@@ -27,11 +26,11 @@ export const DataStats: React.FC = () => {
       >
         <span
           style={{
-            fontSize: 10,
+            fontSize: 9,
             fontWeight: 500,
             textTransform: 'uppercase',
             letterSpacing: '2px',
-            color: 'rgba(255,255,255,0.5)',
+            color: '#00ffa3',
           }}
         >
           Statistics
@@ -51,21 +50,20 @@ export const DataStats: React.FC = () => {
 
       {!collapsed && (
         <>
-          {/* Row count */}
           <div style={{ marginBottom: 12 }}>
             <span
               style={{
                 fontSize: 20,
                 fontWeight: 300,
-                fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.92)',
+                fontFamily: "'JetBrains Mono', monospace",
+                color: '#00ffa3',
               }}
             >
               {rows.length.toLocaleString()}
             </span>
             <span
               style={{
-                fontSize: 10,
+                fontSize: 9,
                 color: 'rgba(255,255,255,0.4)',
                 marginLeft: 6,
                 textTransform: 'uppercase',
@@ -76,17 +74,15 @@ export const DataStats: React.FC = () => {
             </span>
           </div>
 
-          {/* Per-column stats */}
           {stats.map((col) => (
             <ColumnStatRow key={col.column} stat={col} />
           ))}
 
-          {/* Correlations */}
           {correlations.length > 0 && (
             <div style={{ marginTop: 10 }}>
               <div
                 style={{
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: 500,
                   textTransform: 'uppercase',
                   letterSpacing: '2px',
@@ -107,8 +103,6 @@ export const DataStats: React.FC = () => {
   );
 };
 
-/* ── Per-column stat row ──────────────────────────────────────────────── */
-
 const ColumnStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
   if (stat.type === 'numeric') {
     return <NumericStatRow stat={stat} />;
@@ -124,16 +118,13 @@ const NumericStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
   const max = stat.max ?? 1;
   const mean = stat.mean ?? 0;
   const range = max - min || 1;
-
-  const minPct = 0;
-  const maxPct = 100;
   const meanPct = ((mean - min) / range) * 100;
 
   return (
     <div style={{ marginBottom: 8 }}>
       <div
         style={{
-          fontSize: 10,
+          fontSize: 9,
           color: 'rgba(255,255,255,0.5)',
           marginBottom: 3,
         }}
@@ -147,32 +138,28 @@ const NumericStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
           gap: 4,
           fontSize: 9,
           color: 'rgba(255,255,255,0.35)',
-          fontFamily: 'monospace',
+          fontFamily: "'JetBrains Mono', monospace",
         }}
       >
         <span>{min.toFixed(1)}</span>
         <div
           style={{
             flex: 1,
-            height: 4,
+            height: 3,
             background: 'rgba(255,255,255,0.06)',
-            borderRadius: 2,
             position: 'relative',
             overflow: 'hidden',
           }}
         >
-          {/* Min-to-max bar */}
           <div
             style={{
               position: 'absolute',
-              left: `${minPct}%`,
-              width: `${maxPct - minPct}%`,
+              left: 0,
+              width: '100%',
               height: '100%',
-              background: 'rgba(179,136,255,0.35)',
-              borderRadius: 2,
+              background: 'rgba(0,255,163,0.2)',
             }}
           />
-          {/* Mean marker */}
           <div
             style={{
               position: 'absolute',
@@ -180,8 +167,7 @@ const NumericStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
               top: 0,
               width: 2,
               height: '100%',
-              background: '#b388ff',
-              borderRadius: 1,
+              background: '#00ffa3',
             }}
           />
         </div>
@@ -191,7 +177,7 @@ const NumericStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
         style={{
           fontSize: 9,
           color: 'rgba(255,255,255,0.35)',
-          fontFamily: 'monospace',
+          fontFamily: "'JetBrains Mono', monospace",
           marginTop: 1,
         }}
       >
@@ -200,17 +186,6 @@ const NumericStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
     </div>
   );
 };
-
-const CATEGORY_COLORS = [
-  '#b388ff',
-  '#66bb6a',
-  '#ffa726',
-  '#42a5f5',
-  '#ef5350',
-  '#ab47bc',
-  '#26c6da',
-  '#ffca28',
-];
 
 const CategoricalStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
   const valueCounts = stat.valueCounts!;
@@ -223,14 +198,14 @@ const CategoricalStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
     <div style={{ marginBottom: 8 }}>
       <div
         style={{
-          fontSize: 10,
+          fontSize: 9,
           color: 'rgba(255,255,255,0.5)',
           marginBottom: 3,
         }}
       >
         {stat.column}
       </div>
-      <div style={{ display: 'flex', height: 4, borderRadius: 2, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', height: 3, overflow: 'hidden' }}>
         {entries.map(([cat, count], i) => (
           <div
             key={cat}
@@ -238,7 +213,7 @@ const CategoricalStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
             style={{
               width: `${(count / total) * 100}%`,
               height: '100%',
-              background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+              background: i % 2 === 0 ? 'rgba(0,255,163,0.5)' : 'rgba(255,255,255,0.2)',
               opacity: 0.7,
             }}
           />
@@ -257,8 +232,6 @@ const CategoricalStatRow: React.FC<{ stat: ColumnStats }> = ({ stat }) => {
   );
 };
 
-/* ── Correlation badge ────────────────────────────────────────────────── */
-
 const CorrelationBadge: React.FC<{ corr: CorrelationResult }> = ({ corr }) => {
   const isStrong = Math.abs(corr.r) > 0.7;
   return (
@@ -268,14 +241,15 @@ const CorrelationBadge: React.FC<{ corr: CorrelationResult }> = ({ corr }) => {
         alignItems: 'center',
         gap: 4,
         padding: '2px 8px',
-        borderRadius: 4,
+        borderRadius: 0,
         background: isStrong
-          ? 'rgba(102,187,106,0.15)'
+          ? 'rgba(0,255,163,0.1)'
           : 'rgba(255,255,255,0.04)',
+        border: isStrong ? '1px solid rgba(0,255,163,0.2)' : '1px solid transparent',
         marginRight: 4,
         marginBottom: 4,
         fontSize: 9,
-        fontFamily: 'monospace',
+        fontFamily: "'JetBrains Mono', monospace",
       }}
     >
       <span style={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -283,7 +257,7 @@ const CorrelationBadge: React.FC<{ corr: CorrelationResult }> = ({ corr }) => {
       </span>
       <span
         style={{
-          color: isStrong ? '#66bb6a' : 'rgba(255,255,255,0.28)',
+          color: isStrong ? '#00ffa3' : 'rgba(255,255,255,0.28)',
           fontWeight: 600,
         }}
       >

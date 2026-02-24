@@ -1,17 +1,6 @@
-// ── NEBULA 3D Visualization — Story Controls ──────────────────────────
+// ── Topologies of Thoughts — Story Controls ─────────────────────────────
 import React from 'react';
 import { usePresentationStore } from '../../stores/usePresentationStore';
-
-const SNAPSHOT_COLORS = [
-  '#b388ff',
-  '#66bb6a',
-  '#ffa726',
-  '#42a5f5',
-  '#ef5350',
-  '#ab47bc',
-  '#26c6da',
-  '#ffca28',
-];
 
 export const StoryControls: React.FC = () => {
   const snapshots = usePresentationStore((s) => s.snapshots);
@@ -22,7 +11,6 @@ export const StoryControls: React.FC = () => {
   const setActiveIndex = usePresentationStore((s) => s.setActiveIndex);
   const togglePlaying = usePresentationStore((s) => s.togglePlaying);
 
-  // Only visible when snapshots exist or in presentation mode
   if (snapshots.length === 0 && !isStoryMode) return null;
 
   const handlePrev = () => {
@@ -54,16 +42,17 @@ export const StoryControls: React.FC = () => {
   };
 
   const buttonStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.06)',
-    borderRadius: 8,
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.15)',
+    borderRadius: 0,
     color: 'rgba(255,255,255,0.92)',
     padding: '6px 12px',
-    fontSize: 12,
+    fontSize: 11,
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: "'JetBrains Mono', monospace",
     transition: 'background 150ms ease',
   };
 
@@ -77,42 +66,40 @@ export const StoryControls: React.FC = () => {
         zIndex: 900,
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
-        padding: '10px 16px',
-        borderRadius: 12,
-        background: 'rgba(8,8,20,0.82)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        gap: 8,
+        padding: '10px 14px',
+        borderRadius: 0,
+        background: '#000000',
+        border: '1px solid rgba(255,255,255,0.15)',
       }}
     >
-      {/* Snapshot thumbnails */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         {snapshots.map((snap, i) => (
           <div
             key={snap.id}
             onClick={() => setActiveIndex(i)}
             title={snap.name}
             style={{
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
+              width: 22,
+              height: 22,
+              borderRadius: 0,
               background:
                 i === activeIndex
-                  ? SNAPSHOT_COLORS[i % SNAPSHOT_COLORS.length]
-                  : `${SNAPSHOT_COLORS[i % SNAPSHOT_COLORS.length]}44`,
+                  ? '#00ffa3'
+                  : 'rgba(255,255,255,0.06)',
               border:
                 i === activeIndex
-                  ? '2px solid rgba(255,255,255,0.6)'
-                  : '2px solid transparent',
+                  ? '1px solid #00ffa3'
+                  : '1px solid rgba(255,255,255,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 9,
               fontWeight: 600,
+              fontFamily: "'JetBrains Mono', monospace",
               color:
                 i === activeIndex
-                  ? 'rgba(0,0,0,0.8)'
+                  ? '#000000'
                   : 'rgba(255,255,255,0.6)',
               cursor: 'pointer',
               transition: 'all 200ms ease',
@@ -123,7 +110,6 @@ export const StoryControls: React.FC = () => {
         ))}
       </div>
 
-      {/* Prev button */}
       <button
         onClick={handlePrev}
         style={buttonStyle}
@@ -140,23 +126,22 @@ export const StoryControls: React.FC = () => {
         </svg>
       </button>
 
-      {/* Play / Pause button */}
       <button
         onClick={togglePlaying}
         style={{
           ...buttonStyle,
           background: isPlaying
-            ? 'rgba(179,136,255,0.25)'
-            : 'rgba(255,255,255,0.06)',
+            ? 'rgba(0,255,163,0.15)'
+            : 'rgba(255,255,255,0.04)',
+          borderColor: isPlaying ? '#00ffa3' : 'rgba(255,255,255,0.15)',
         }}
         title={isPlaying ? 'Pause' : 'Play'}
       >
-        <span style={{ fontSize: 14, lineHeight: 1 }}>
+        <span style={{ fontSize: 12, lineHeight: 1 }}>
           {isPlaying ? '\u23F8' : '\u25B6'}
         </span>
       </button>
 
-      {/* Next button */}
       <button
         onClick={handleNext}
         style={buttonStyle}
@@ -173,21 +158,19 @@ export const StoryControls: React.FC = () => {
         </svg>
       </button>
 
-      {/* Divider */}
       <div
         style={{
           width: 1,
           height: 20,
-          background: 'rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.1)',
         }}
       />
 
-      {/* Save Snapshot button */}
       <button
         onClick={handleSaveSnapshot}
         style={{
           ...buttonStyle,
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: 500,
           textTransform: 'uppercase',
           letterSpacing: '1px',

@@ -4,9 +4,12 @@ import { ParticleCloud } from './ParticleCloud';
 import { HandCursor } from './HandCursor';
 import { Tooltip3D } from './Tooltip3D';
 import { FloatingLabels } from './FloatingLabel';
+import { EdgeLines } from './EdgeLines';
+import { EdgeLabels } from './EdgeLabels';
+import { NodeLabels } from './NodeLabels';
 import { useGestureClassifier } from '../../hooks/useGestureClassifier';
 import { useParticleInteraction } from '../../hooks/useParticleInteraction';
-import { BLOOM_INTENSITY, BLOOM_THRESHOLD } from '../../constants/index';
+import { BLOOM_INTENSITY, BLOOM_THRESHOLD, BLOOM_SMOOTHING } from '../../constants/index';
 
 function SceneLogic() {
   useGestureClassifier();
@@ -17,9 +20,9 @@ function SceneLogic() {
 export function Scene() {
   return (
     <>
-      <ambientLight intensity={0.15} />
-      <pointLight position={[10, 10, 10]} intensity={0.5} />
-      <pointLight position={[-10, -10, -5]} intensity={0.3} color="#b388ff" />
+      <ambientLight intensity={0.3} />
+      <pointLight position={[10, 8, 10]} intensity={0.4} color="#4488ff" />
+      <pointLight position={[-8, -5, -10]} intensity={0.3} color="#ff8844" />
 
       <OrbitControls
         enablePan={false}
@@ -29,7 +32,10 @@ export function Scene() {
         maxDistance={20}
       />
 
+      <EdgeLines />
       <ParticleCloud />
+      <EdgeLabels />
+      <NodeLabels />
       <HandCursor />
       <Tooltip3D />
       <FloatingLabels />
@@ -40,7 +46,7 @@ export function Scene() {
           mipmapBlur
           intensity={BLOOM_INTENSITY}
           luminanceThreshold={BLOOM_THRESHOLD}
-          luminanceSmoothing={0.9}
+          luminanceSmoothing={BLOOM_SMOOTHING}
         />
       </EffectComposer>
     </>

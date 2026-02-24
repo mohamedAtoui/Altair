@@ -1,4 +1,4 @@
-// ── NEBULA 3D Visualization — Onboarding Overlay ──────────────────────
+// ── Topologies of Thoughts — Onboarding Overlay ─────────────────────────
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHandStore } from '../../stores/useHandStore';
 import { useAppStore } from '../../stores/useAppStore';
@@ -52,8 +52,6 @@ const STEPS: OnboardingStep[] = [
   },
 ];
 
-/* ── CSS Keyframe injection ────────────────────────────────────────── */
-
 const KEYFRAMES = `
 @keyframes nebula-ghost-wave {
   0%, 100% { transform: rotate(0deg) translateY(0); }
@@ -76,10 +74,6 @@ const KEYFRAMES = `
   0%, 100% { transform: scale(1); }
   50% { transform: scale(0.8); }
 }
-@keyframes nebula-pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.6; }
-  100% { transform: scale(2); opacity: 0; }
-}
 `;
 
 const ANIMATION_MAP: Record<string, string> = {
@@ -98,7 +92,6 @@ export const OnboardingOverlay: React.FC = () => {
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(false);
 
-  // Check localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'true') {
@@ -108,7 +101,6 @@ export const OnboardingOverlay: React.FC = () => {
     }
   }, [setOnboardingComplete]);
 
-  // Inject keyframes
   useEffect(() => {
     if (!visible) return;
     const styleEl = document.createElement('style');
@@ -119,7 +111,6 @@ export const OnboardingOverlay: React.FC = () => {
     };
   }, [visible]);
 
-  // Advance step when matching gesture is detected
   useEffect(() => {
     if (!visible || step >= STEPS.length) return;
     const requiredGesture = STEPS[step].gesture;
@@ -145,7 +136,9 @@ export const OnboardingOverlay: React.FC = () => {
     handleComplete();
   }, [handleComplete]);
 
-  if (!visible || isOnboardingComplete) return null;
+  const handTrackingStatus = useAppStore((s) => s.handTrackingStatus);
+
+  if (!visible || isOnboardingComplete || handTrackingStatus !== 'active') return null;
 
   const currentStep = STEPS[step];
   const progress = ((step + 1) / STEPS.length) * 100;
@@ -157,12 +150,12 @@ export const OnboardingOverlay: React.FC = () => {
         position: 'fixed',
         inset: 0,
         zIndex: 2000,
-        background: 'rgba(4,4,12,0.92)',
+        background: '#000000',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        fontFamily: 'inherit',
+        fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
       }}
     >
       {/* Skip button */}
@@ -173,15 +166,14 @@ export const OnboardingOverlay: React.FC = () => {
           top: 24,
           right: 24,
           background: 'none',
-          border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: 8,
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: 0,
           color: 'rgba(255,255,255,0.5)',
           padding: '6px 16px',
-          fontSize: 11,
+          fontSize: 10,
           cursor: 'pointer',
           textTransform: 'uppercase',
-          letterSpacing: '1.5px',
-          transition: 'color 150ms ease',
+          letterSpacing: '2px',
         }}
       >
         Skip
@@ -213,25 +205,13 @@ export const OnboardingOverlay: React.FC = () => {
           marginBottom: 32,
         }}
       >
-        {/* Pulse ring */}
-        <div
-          style={{
-            position: 'absolute',
-            width: 80,
-            height: 80,
-            borderRadius: '50%',
-            border: '2px solid rgba(179,136,255,0.3)',
-            animation: 'nebula-pulse-ring 2s ease-out infinite',
-          }}
-        />
-        {/* Hand icon */}
         <div
           style={{
             fontSize: 56,
             lineHeight: 1,
             animation: ANIMATION_MAP[currentStep.animationClass],
             filter: gestureMatches
-              ? 'drop-shadow(0 0 20px rgba(179,136,255,0.8))'
+              ? 'drop-shadow(0 0 20px rgba(0,255,163,0.6))'
               : 'none',
             transition: 'filter 300ms ease',
           }}
@@ -243,7 +223,7 @@ export const OnboardingOverlay: React.FC = () => {
       {/* Title */}
       <div
         style={{
-          fontSize: 28,
+          fontSize: 24,
           fontWeight: 300,
           color: 'rgba(255,255,255,0.92)',
           marginBottom: 12,
@@ -256,11 +236,11 @@ export const OnboardingOverlay: React.FC = () => {
       {/* Description */}
       <div
         style={{
-          fontSize: 14,
+          fontSize: 12,
           color: 'rgba(255,255,255,0.45)',
           textAlign: 'center',
           maxWidth: 360,
-          lineHeight: 1.5,
+          lineHeight: 1.6,
           marginBottom: 40,
         }}
       >
@@ -271,15 +251,15 @@ export const OnboardingOverlay: React.FC = () => {
       {gestureMatches && (
         <div
           style={{
-            fontSize: 12,
-            color: '#66bb6a',
+            fontSize: 11,
+            color: '#00ffa3',
             fontWeight: 500,
             textTransform: 'uppercase',
-            letterSpacing: '2px',
+            letterSpacing: '3px',
             marginBottom: 24,
           }}
         >
-          Detected!
+          [Detected]
         </div>
       )}
 
@@ -289,7 +269,6 @@ export const OnboardingOverlay: React.FC = () => {
           width: 200,
           height: 2,
           background: 'rgba(255,255,255,0.06)',
-          borderRadius: 1,
           overflow: 'hidden',
         }}
       >
@@ -297,8 +276,7 @@ export const OnboardingOverlay: React.FC = () => {
           style={{
             width: `${progress}%`,
             height: '100%',
-            background: '#b388ff',
-            borderRadius: 1,
+            background: '#00ffa3',
             transition: 'width 400ms ease',
           }}
         />

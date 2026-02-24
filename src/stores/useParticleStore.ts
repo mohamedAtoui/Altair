@@ -1,4 +1,4 @@
-// ── NEBULA 3D Visualization — Particle Store ─────────────────────────
+// ── Topologies of Thoughts — Particle Store ─────────────────────────
 import { create } from 'zustand';
 
 interface ParticleState {
@@ -23,14 +23,16 @@ interface ParticleActions {
   resetTargets: () => void;
   setSelectedIndex: (idx: number | null) => void;
   setHighlightedCluster: (cluster: string | null) => void;
+  setTargetPositions: (positions: Float32Array) => void;
+  commitPositions: () => void;
 }
 
-// Default emissive violet: #b388ff RGB ~(0.702, 0.533, 1.0) * 2.5
-const DEFAULT_R = 1.755;
-const DEFAULT_G = 1.333;
-const DEFAULT_B = 2.5;
+// Default white nodes
+const DEFAULT_R = 1.0;
+const DEFAULT_G = 1.0;
+const DEFAULT_B = 1.0;
 
-const DEFAULT_SIZE = 0.04;
+const DEFAULT_SIZE = 0.05;
 const DEFAULT_SCALE = 1;
 
 export const useParticleStore = create<ParticleState & ParticleActions>(
@@ -62,7 +64,7 @@ export const useParticleStore = create<ParticleState & ParticleActions>(
         basePositions[i3 + 1] = Math.random() * 8 - 4;
         basePositions[i3 + 2] = Math.random() * 8 - 4;
 
-        // Default emissive violet color
+        // Default white color
         colors[i3] = DEFAULT_R;
         colors[i3 + 1] = DEFAULT_G;
         colors[i3 + 2] = DEFAULT_B;
@@ -117,5 +119,16 @@ export const useParticleStore = create<ParticleState & ParticleActions>(
     setSelectedIndex: (idx) => set({ selectedIndex: idx }),
 
     setHighlightedCluster: (cluster) => set({ highlightedCluster: cluster }),
+
+    /** Set new target positions for topology transitions (animate via damping). */
+    setTargetPositions: (positions) => {
+      set({ targetPositions: new Float32Array(positions) });
+    },
+
+    /** Copy current positions to base (after transition settles). */
+    commitPositions: () => {
+      const { currentPositions } = get();
+      set({ basePositions: new Float32Array(currentPositions) });
+    },
   }),
 );

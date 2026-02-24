@@ -1,10 +1,10 @@
-// ── NEBULA 3D Visualization — Mapping Controls ────────────────────────
+// ── Topologies of Thoughts — Mapping Controls ───────────────────────────
 import React from 'react';
 import { useDataStore } from '../../stores/useDataStore';
 import type { DataMapping } from '../../types/index';
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 10,
+  fontSize: 9,
   fontWeight: 500,
   textTransform: 'uppercase',
   letterSpacing: '2px',
@@ -16,15 +16,16 @@ const labelStyle: React.CSSProperties = {
 const selectStyle: React.CSSProperties = {
   width: '100%',
   padding: '6px 8px',
-  fontSize: 12,
+  fontSize: 11,
   color: 'rgba(255,255,255,0.92)',
-  background: 'rgba(8,8,20,0.82)',
-  border: '1px solid rgba(255,255,255,0.06)',
-  borderRadius: 8,
+  background: '#000000',
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: 0,
   outline: 'none',
   appearance: 'none',
   WebkitAppearance: 'none',
   cursor: 'pointer',
+  fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
   backgroundImage:
     'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'rgba(255,255,255,0.3)\'/%3E%3C/svg%3E")',
   backgroundRepeat: 'no-repeat',
@@ -58,18 +59,17 @@ export const MappingControls: React.FC = () => {
     <div style={{ marginTop: 12 }}>
       <div
         style={{
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: 500,
           textTransform: 'uppercase',
           letterSpacing: '2px',
-          color: 'rgba(255,255,255,0.5)',
+          color: '#00ffa3',
           marginBottom: 8,
         }}
       >
         Mapping
       </div>
 
-      {/* Position mode */}
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Position</label>
         <select
@@ -82,7 +82,6 @@ export const MappingControls: React.FC = () => {
         </select>
       </div>
 
-      {/* Manual axes (only when manual) */}
       {mapping.positionMode === 'manual' && (
         <>
           <div style={fieldWrapStyle}>
@@ -135,7 +134,6 @@ export const MappingControls: React.FC = () => {
         </>
       )}
 
-      {/* Color column */}
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Color</label>
         <select
@@ -152,7 +150,6 @@ export const MappingControls: React.FC = () => {
         </select>
       </div>
 
-      {/* Size column */}
       <div style={fieldWrapStyle}>
         <label style={labelStyle}>Size</label>
         <select

@@ -3,6 +3,7 @@ import {
   FIST_CURL_THRESHOLD,
   POINT_EXTEND_THRESHOLD,
   GESTURE_DEBOUNCE_FRAMES,
+  SWIPE_VELOCITY_THRESHOLD,
 } from '../constants/index';
 import { Gesture } from '../types/index';
 
@@ -63,8 +64,31 @@ export class GestureClassifier {
   private buffer: Gesture[] = [];
   private currentGesture: Gesture = Gesture.None;
 
+  // Swipe detection state
+  private palmHistory: { x: number; y: number; t: number }[] = [];
+  private lastSwipeTime: number = 0;
+
   classify(landmarks: number[][]): { gesture: Gesture; confidence: number } {
     const raw = classifyRaw(landmarks);
+
+    // Track palm center for swipe detection
+    const [px, py] = getPalmCenter(landmarks);
+    const now = performance.now();
+    this.palmHistory.push({ x: px, y: py, t: now });
+
+    // Keep only last 10 frames (~300ms at 30fps)
+    if (this.palmHistory.length > 10) {
+      this.palmHistory.shift();
+    }
+
+    // Check for swipe: only when hand is open
+    if (raw === Gesture.OpenHand && this.palmHistory.length >= 5) {
+      const swipe = this.detectSwipe(now);
+      if (swipe) {
+        return { gesture: swipe, confidence: 0.9 };
+      }
+    }
+
     this.buffer.push(raw);
     if (this.buffer.length > GESTURE_DEBOUNCE_FRAMES) {
       this.buffer.shift();
@@ -83,9 +107,45 @@ export class GestureClassifier {
     return { gesture: this.currentGesture, confidence };
   }
 
+  private detectSwipe(now: number): Gesture | null {
+    // Cooldown
+    if (now - this.lastSwipeTime < 1500) return null;
+
+    const history = this.palmHistory;
+    if (history.length < 5) return null;
+
+    // Compute velocity over the last 5 samples
+    const start = history[history.length - 5];
+    const end = history[history.length - 1];
+    const dt = (end.t - start.t) / 1000; // seconds
+    if (dt <= 0) return null;
+
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const vx = dx / dt;
+    const vy = dy / dt;
+
+    // Must be primarily horizontal
+    if (Math.abs(vx) < SWIPE_VELOCITY_THRESHOLD) return null;
+    if (Math.abs(vy) > Math.abs(vx) * 0.7) return null;
+
+    this.lastSwipeTime = now;
+    this.palmHistory = [];
+
+    // Note: camera is mirrored, so negative vx = visual swipe right
+    if (vx < -SWIPE_VELOCITY_THRESHOLD) {
+      return Gesture.SwipeRight;
+    } else if (vx > SWIPE_VELOCITY_THRESHOLD) {
+      return Gesture.SwipeLeft;
+    }
+
+    return null;
+  }
+
   reset() {
     this.buffer = [];
     this.currentGesture = Gesture.None;
+    this.palmHistory = [];
   }
 }
 

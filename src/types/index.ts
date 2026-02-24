@@ -1,4 +1,4 @@
-// ── NEBULA 3D Visualization — Shared Types ──────────────────────────
+// ── Topologies of Thoughts — Shared Types ──────────────────────────
 
 /** Recognised hand‑gesture states. */
 export const Gesture = {
@@ -7,6 +7,8 @@ export const Gesture = {
   Pinch: 'Pinch',
   Fist: 'Fist',
   Point: 'Point',
+  SwipeLeft: 'SwipeLeft',
+  SwipeRight: 'SwipeRight',
 } as const;
 export type Gesture = (typeof Gesture)[keyof typeof Gesture];
 
@@ -99,4 +101,37 @@ export interface CorrelationResult {
   col2: string;
   r: number;
   strength: 'strong' | 'moderate' | 'weak';
+}
+
+/** An edge between two nodes in the graph. */
+export interface GraphEdge {
+  source: number;
+  target: number;
+  weight: number;
+}
+
+/** A label displayed on an edge in distributed mode. */
+export interface EdgeLabel {
+  source: number;
+  target: number;
+  text: string;
+}
+
+/** Available topology layout modes. */
+export type TopologyMode = 'centralized' | 'decentralized' | 'distributed';
+
+/** Configuration for a topology mode's display in the panel. */
+export interface TopologyModeConfig {
+  id: TopologyMode;
+  name: string;
+  description: string;
+  diagramNodes: [number, number][];
+  diagramEdges: [number, number][];
+}
+
+/** Cluster label positioned in 3D space. */
+export interface ClusterLabel {
+  text: string;
+  position: [number, number, number];
+  color: string;
 }

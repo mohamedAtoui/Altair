@@ -21,19 +21,19 @@ export function HandCursor() {
     mesh.position.z += (worldPosition[2] - mesh.position.z) * 0.2;
 
     // Size varies by gesture
-    let targetScale = 0.15;
+    let targetScale = 0.12;
     switch (currentGesture) {
       case Gesture.OpenHand:
-        targetScale = 0.25;
-        break;
-      case Gesture.Pinch:
-        targetScale = 0.08;
-        break;
-      case Gesture.Fist:
         targetScale = 0.2;
         break;
+      case Gesture.Pinch:
+        targetScale = 0.06;
+        break;
+      case Gesture.Fist:
+        targetScale = 0.16;
+        break;
       case Gesture.Point:
-        targetScale = 0.1;
+        targetScale = 0.08;
         break;
     }
 
@@ -53,18 +53,15 @@ export function HandCursor() {
 
   return (
     <Trail
-      width={1}
-      length={6}
-      color="#b388ff"
+      width={0.8}
+      length={5}
+      color="#00ffa3"
       attenuation={(t) => t * t}
     >
       <mesh ref={meshRef}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial
-          color="#b388ff"
-          emissive="#b388ff"
-          emissiveIntensity={2}
-          toneMapped={false}
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshBasicMaterial
+          color="#00ffa3"
           transparent
           opacity={0.4}
           depthWrite={false}

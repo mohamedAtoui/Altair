@@ -1,11 +1,13 @@
-// ── NEBULA 3D Visualization — App Store ──────────────────────────────
+// ── Topologies of Thoughts — App Store ──────────────────────────────
 import { create } from 'zustand';
 
 export type AppMode = 'idle' | 'loading' | 'exploring' | 'presenting';
+export type HandTrackingStatus = 'off' | 'initializing' | 'active' | 'error';
 
 interface AppState {
   mode: AppMode;
   isHandTrackingActive: boolean;
+  handTrackingStatus: HandTrackingStatus;
   isPanelCollapsed: boolean;
   isWebcamVisible: boolean;
   isOnboardingComplete: boolean;
@@ -15,6 +17,7 @@ interface AppState {
 interface AppActions {
   setMode: (mode: AppMode) => void;
   setHandTrackingActive: (active: boolean) => void;
+  setHandTrackingStatus: (status: HandTrackingStatus) => void;
   togglePanel: () => void;
   toggleWebcam: () => void;
   setOnboardingComplete: (complete: boolean) => void;
@@ -22,17 +25,17 @@ interface AppActions {
 }
 
 export const useAppStore = create<AppState & AppActions>((set) => ({
-  // ── State ──────────────────────────────────────────────────────────
   mode: 'idle',
-  isHandTrackingActive: true,
-  isPanelCollapsed: false,
+  isHandTrackingActive: false,
+  handTrackingStatus: 'off',
+  isPanelCollapsed: true,
   isWebcamVisible: true,
   isOnboardingComplete: false,
   error: null,
 
-  // ── Actions ────────────────────────────────────────────────────────
   setMode: (mode) => set({ mode }),
   setHandTrackingActive: (active) => set({ isHandTrackingActive: active }),
+  setHandTrackingStatus: (status) => set({ handTrackingStatus: status }),
   togglePanel: () => set((s) => ({ isPanelCollapsed: !s.isPanelCollapsed })),
   toggleWebcam: () => set((s) => ({ isWebcamVisible: !s.isWebcamVisible })),
   setOnboardingComplete: (complete) => set({ isOnboardingComplete: complete }),
