@@ -1,73 +1,89 @@
-# React + TypeScript + Vite
+# Altair — Topologies of Thoughts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive 3D data visualization platform that lets you explore datasets using hand gestures. Upload any CSV, watch it transform into a particle cloud, and manipulate it in real-time through your webcam.
 
-Currently, two official plugins are available:
+## What It Does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Altair renders tabular data as a 3D particle system where each row becomes a point in space. You can map columns to position, color, and size, then explore the data physically using six hand gestures tracked via your webcam.
 
-## React Compiler
+Three network topology modes reveal different structural relationships in your data:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Centralized** — Hub-and-spoke layout where one central node connects to all others
+- **Decentralized** — Clustered groups with sparse bridges between them
+- **Distributed** — k-nearest-neighbor connections where each node links to its closest peers
 
-## Expanding the ESLint configuration
+Swipe gestures switch between topologies in real-time with smooth animated transitions.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Hand Gestures
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Gesture | Action |
+|---------|--------|
+| Open Hand | Push particles away from your hand |
+| Pinch | Select a single data point |
+| Fist | Collapse clusters toward your hand |
+| Point | Highlight a category, dim everything else |
+| Swipe Left/Right | Cycle through topology modes |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Hand tracking runs on-device via MediaPipe — no data leaves your browser.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Data Pipeline
+
+1. Upload a CSV (or pick a built-in demo dataset)
+2. Columns are auto-analyzed and classified as numeric, categorical, or text
+3. Smart auto-detection maps columns to X/Y/Z position, color, and size
+4. UMAP dimensionality reduction projects high-dimensional data into 3D (runs in a web worker)
+5. k-NN graph edges are computed to form the network topology
+6. Particles render via instanced meshes with a bloom post-processing pass
+
+You can override any mapping manually, toggle category visibility, and view column statistics and correlations.
+
+## Built-in Demo Datasets
+
+- Knowledge Concepts
+- Startups
+- Exoplanets
+- Fitness Tracker
+
+## Features
+
+- **Real-time 3D rendering** — 10K+ particles via Three.js instanced meshes
+- **Hand tracking** — MediaPipe 21-point hand landmarks at ~30fps
+- **Gesture classification** — Rule-based detection with debouncing and One-Euro filtering for smooth tracking
+- **Particle physics** — Repulsion, spring dynamics, collapse, and damping
+- **Dynamic column mapping** — Reassign what drives position, color, size, and labels on the fly
+- **Filtering** — Toggle visibility per category
+- **Presentation mode** — Save snapshots and build a story walkthrough
+- **Onboarding** — Interactive 5-step tutorial for first-time users
+
+## Tech Stack
+
+- **React 19** + **TypeScript** + **Vite**
+- **Three.js** / **React Three Fiber** / **Drei** — 3D rendering
+- **Zustand** — State management (6 stores: app, data, particles, graph, hand, presentation)
+- **MediaPipe Tasks Vision** — Hand landmark detection via WASM/GPU
+- **UMAP-JS** — Dimensionality reduction
+- **PapaParse** — CSV parsing
+- **D3 Scale / D3 Scale Chromatic** — Data normalization and color schemes
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open `http://localhost:5173` and allow camera access when prompted.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── scene/       # 3D scene: particles, edges, hand cursor, labels, tooltips
+│   └── ui/          # Overlay panels: data import, topology selector, filters, onboarding
+├── hooks/           # Hand tracking, gesture classification, data loading, physics
+├── stores/          # Zustand state stores
+├── lib/             # Algorithms: gesture detection, physics, layout engine, graph processing
+├── types/           # TypeScript interfaces
+└── constants/       # Tunable parameters
 ```
